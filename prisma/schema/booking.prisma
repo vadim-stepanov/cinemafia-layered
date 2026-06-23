@@ -1,0 +1,83 @@
+enum BookingStatus {
+  HELD
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+
+  @@map("booking_status")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+
+  @@map("payment_status")
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  memberId        String        @map("member_id")
+  sessionId       String        @map("session_id")
+  cabinId         String?       @map("cabin_id")
+  status          BookingStatus @default(HELD)
+  guestCount      Int           @default(0) @map("guest_count")
+  totalPriceCents Int           @map("total_price_cents")
+  expiresAt       DateTime?     @map("expires_at") @db.Timestamptz(3)
+  confirmedAt     DateTime?     @map("confirmed_at") @db.Timestamptz(3)
+  cancelledAt     DateTime?     @map("cancelled_at") @db.Timestamptz(3)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  member  Member        @relation(fields: [memberId], references: [id])
+  session Session       @relation(fields: [sessionId], references: [id])
+  cabin   Cabin?        @relation(fields: [cabinId], references: [id])
+  seats   BookingSeat[]
+  guests  Guest[]
+  payment Payment?
+
+  @@index([memberId])
+  @@index([sessionId])
+  @@index([status, expiresAt])
+  @@map("bookings")
+}
+
+model BookingSeat {
+  id        String  @id @default(cuid())
+  bookingId String  @map("booking_id")
+  sessionId String  @map("session_id")
+  seatId    String  @map("seat_id")
+  active    Boolean @default(true)
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  seat    Seat    @relation(fields: [seatId], references: [id])
+
+  @@index([bookingId])
+  @@map("booking_seats")
+}
+
+model Guest {
+  id        String  @id @default(cuid())
+  bookingId String  @map("booking_id")
+  fullName  String? @map("full_name")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+  @@map("guests")
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  bookingId   String        @unique @map("booking_id")
+  status      PaymentStatus @default(PENDING)
+  amountCents Int           @map("amount_cents")
+  providerRef String?       @map("provider_ref")
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}

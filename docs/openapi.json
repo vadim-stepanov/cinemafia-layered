@@ -1,0 +1,1213 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liveness and database connectivity probe."
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/v1/sessions": {
+      "get": {
+        "operationId": "CatalogController_listSessions_v1",
+        "parameters": [
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "description": "Filter by session kind.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GENRE_BLOCK",
+                "COMBO",
+                "MARATHON",
+                "SPECIAL_CUT",
+                "SPECIAL_EVENT",
+                "PREMIERE"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "ISO 8601 — only sessions starting at or after this instant.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "description": "ISO 8601 — only sessions starting at or before this instant.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionSummaryResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/api/v1/sessions/{id}": {
+      "get": {
+        "operationId": "CatalogController_getSession_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDetailResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found."
+          }
+        },
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "MembersController_getMe_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No member profile for the authenticated user."
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/v1/bookings/hold": {
+      "post": {
+        "operationId": "BookingController_hold_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HoldBookingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "booking"
+        ]
+      }
+    },
+    "/api/v1/bookings/{id}/confirm": {
+      "post": {
+        "operationId": "BookingController_confirm_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "booking"
+        ]
+      }
+    },
+    "/api/v1/bookings/{id}/cancel": {
+      "post": {
+        "operationId": "BookingController_cancel_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "booking"
+        ]
+      }
+    },
+    "/api/v1/bookings": {
+      "get": {
+        "operationId": "BookingController_list_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingSummaryResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "booking"
+        ]
+      }
+    },
+    "/api/v1/bookings/{id}": {
+      "get": {
+        "operationId": "BookingController_get_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "booking"
+        ]
+      }
+    },
+    "/api/v1/sessions/{sessionId}/notes": {
+      "get": {
+        "operationId": "ClubNotesController_list_v1",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClubNoteResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Active membership (and a booking, to post) required."
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "club-notes"
+        ]
+      },
+      "post": {
+        "operationId": "ClubNotesController_create_v1",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClubNoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClubNoteResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Active membership (and a booking, to post) required."
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "club-notes"
+        ]
+      }
+    },
+    "/api/v1/support": {
+      "post": {
+        "operationId": "SupportController_create_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSupportTicketDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupportTicketResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-User-Id": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "support"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Cinemafia API",
+    "description": "Cinemafia — Layered (N-tier). Canonical REST contract for the series.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "Emulated auth token."
+      },
+      "X-User-Id": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-User-Id"
+      }
+    },
+    "schemas": {
+      "HallRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "MovieRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
+      "SessionMovieSummaryDto": {
+        "type": "object",
+        "properties": {
+          "position": {
+            "type": "number",
+            "description": "Order of the movie within the session bundle."
+          },
+          "movie": {
+            "$ref": "#/components/schemas/MovieRefDto"
+          }
+        },
+        "required": [
+          "position",
+          "movie"
+        ]
+      },
+      "SessionSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "GENRE_BLOCK",
+              "COMBO",
+              "MARATHON",
+              "SPECIAL_CUT",
+              "SPECIAL_EVENT",
+              "PREMIERE"
+            ]
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "earlyAccessUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minLoyaltyDegree": {
+            "type": "number",
+            "description": "Minimum loyalty degree required to access the session."
+          },
+          "basePriceStandardCents": {
+            "type": "number"
+          },
+          "basePriceReclinerCents": {
+            "type": "number"
+          },
+          "basePricePremiumCents": {
+            "type": "number"
+          },
+          "cabinPriceCents": {
+            "type": "number"
+          },
+          "hall": {
+            "$ref": "#/components/schemas/HallRefDto"
+          },
+          "movies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SessionMovieSummaryDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "startsAt",
+          "endsAt",
+          "earlyAccessUntil",
+          "minLoyaltyDegree",
+          "basePriceStandardCents",
+          "basePriceReclinerCents",
+          "basePricePremiumCents",
+          "cabinPriceCents",
+          "hall",
+          "movies"
+        ]
+      },
+      "SeatDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rowLabel": {
+            "type": "string"
+          },
+          "number": {
+            "type": "number"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "STANDARD",
+              "RECLINER",
+              "PREMIUM"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "rowLabel",
+          "number",
+          "tier"
+        ]
+      },
+      "CabinDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "capacity"
+        ]
+      },
+      "HallDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "seats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SeatDto"
+            }
+          },
+          "cabins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CabinDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "seats",
+          "cabins"
+        ]
+      },
+      "MovieDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "durationMin": {
+            "type": "number"
+          },
+          "releaseYear": {
+            "type": "number",
+            "nullable": true
+          },
+          "synopsis": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "durationMin",
+          "releaseYear",
+          "synopsis"
+        ]
+      },
+      "SessionMovieDto": {
+        "type": "object",
+        "properties": {
+          "position": {
+            "type": "number"
+          },
+          "movie": {
+            "$ref": "#/components/schemas/MovieDto"
+          }
+        },
+        "required": [
+          "position",
+          "movie"
+        ]
+      },
+      "SessionDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "GENRE_BLOCK",
+              "COMBO",
+              "MARATHON",
+              "SPECIAL_CUT",
+              "SPECIAL_EVENT",
+              "PREMIERE"
+            ]
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "earlyAccessUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minLoyaltyDegree": {
+            "type": "number"
+          },
+          "basePriceStandardCents": {
+            "type": "number"
+          },
+          "basePriceReclinerCents": {
+            "type": "number"
+          },
+          "basePricePremiumCents": {
+            "type": "number"
+          },
+          "cabinPriceCents": {
+            "type": "number"
+          },
+          "hall": {
+            "$ref": "#/components/schemas/HallDto"
+          },
+          "movies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SessionMovieDto"
+            }
+          },
+          "takenSeatIds": {
+            "description": "Seat ids currently held or confirmed.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "startsAt",
+          "endsAt",
+          "earlyAccessUntil",
+          "minLoyaltyDegree",
+          "basePriceStandardCents",
+          "basePriceReclinerCents",
+          "basePricePremiumCents",
+          "cabinPriceCents",
+          "hall",
+          "movies",
+          "takenSeatIds"
+        ]
+      },
+      "MembershipDto": {
+        "type": "object",
+        "properties": {
+          "tier": {
+            "type": "string",
+            "enum": [
+              "BASIC",
+              "PLUS",
+              "PRO"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "EXPIRED"
+            ]
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "tier",
+          "status",
+          "validUntil"
+        ]
+      },
+      "EntitlementsDto": {
+        "type": "object",
+        "properties": {
+          "effectiveGuestQuota": {
+            "type": "number",
+            "description": "base(tier) + loyalty bonus."
+          },
+          "discountPercent": {
+            "type": "number"
+          },
+          "canEarlyAccess": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "effectiveGuestQuota",
+          "discountPercent",
+          "canEarlyAccess"
+        ]
+      },
+      "MeResponseDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "loyaltyDegree": {
+            "type": "number"
+          },
+          "membership": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MembershipDto"
+              }
+            ]
+          },
+          "entitlements": {
+            "$ref": "#/components/schemas/EntitlementsDto"
+          }
+        },
+        "required": [
+          "userId",
+          "displayName",
+          "loyaltyDegree",
+          "membership",
+          "entitlements"
+        ]
+      },
+      "HoldBookingDto": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "seatIds": {
+            "description": "Seat ids to hold (mutually exclusive with cabinId).",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cabinId": {
+            "type": "string",
+            "description": "Cabin id to hold (mutually exclusive with seatIds)."
+          },
+          "guestCount": {
+            "type": "number",
+            "description": "Guests to bring (must fit the effective guest quota).",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "sessionId"
+        ]
+      },
+      "BookingSeatRefDto": {
+        "type": "object",
+        "properties": {
+          "rowLabel": {
+            "type": "string"
+          },
+          "number": {
+            "type": "number"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "STANDARD",
+              "RECLINER",
+              "PREMIUM"
+            ]
+          }
+        },
+        "required": [
+          "rowLabel",
+          "number",
+          "tier"
+        ]
+      },
+      "BookingSeatDto": {
+        "type": "object",
+        "properties": {
+          "seatId": {
+            "type": "string"
+          },
+          "seat": {
+            "$ref": "#/components/schemas/BookingSeatRefDto"
+          }
+        },
+        "required": [
+          "seatId",
+          "seat"
+        ]
+      },
+      "BookingCabinRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "BookingPaymentDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "SUCCEEDED",
+              "FAILED",
+              "REFUNDED"
+            ]
+          },
+          "amountCents": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "status",
+          "amountCents"
+        ]
+      },
+      "BookingResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "HELD",
+              "CONFIRMED",
+              "CANCELLED",
+              "EXPIRED"
+            ]
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "cabinId": {
+            "type": "string",
+            "nullable": true
+          },
+          "guestCount": {
+            "type": "number"
+          },
+          "totalPriceCents": {
+            "type": "number"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "confirmedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "seats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingSeatDto"
+            }
+          },
+          "cabin": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BookingCabinRefDto"
+              }
+            ]
+          },
+          "payment": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BookingPaymentDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "sessionId",
+          "cabinId",
+          "guestCount",
+          "totalPriceCents",
+          "expiresAt",
+          "confirmedAt",
+          "cancelledAt",
+          "createdAt",
+          "seats",
+          "cabin",
+          "payment"
+        ]
+      },
+      "BookingSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "HELD",
+              "CONFIRMED",
+              "CANCELLED",
+              "EXPIRED"
+            ]
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "guestCount": {
+            "type": "number"
+          },
+          "totalPriceCents": {
+            "type": "number"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "sessionId",
+          "guestCount",
+          "totalPriceCents",
+          "expiresAt",
+          "createdAt"
+        ]
+      },
+      "ClubNoteAuthorDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ]
+      },
+      "ClubNoteResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "member": {
+            "$ref": "#/components/schemas/ClubNoteAuthorDto"
+          }
+        },
+        "required": [
+          "id",
+          "body",
+          "createdAt",
+          "member"
+        ]
+      },
+      "CreateClubNoteDto": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
+      "CreateSupportTicketDto": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "subject",
+          "body"
+        ]
+      },
+      "SupportTicketResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "subject",
+          "body",
+          "status",
+          "createdAt"
+        ]
+      }
+    }
+  }
+}

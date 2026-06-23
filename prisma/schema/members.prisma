@@ -1,0 +1,47 @@
+enum MembershipTier {
+  BASIC
+  PLUS
+  PRO
+
+  @@map("membership_tier")
+}
+
+enum MembershipStatus {
+  ACTIVE
+  EXPIRED
+
+  @@map("membership_status")
+}
+
+model Member {
+  id            String   @id @default(cuid())
+  userId        String   @unique @map("user_id")
+  displayName   String   @map("display_name")
+  // Loyalty is an accumulating rank stat, not a heavy aggregate (domain-spec §5).
+  loyaltyDegree Int      @default(0) @map("loyalty_degree")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  membership     Membership?
+  bookings       Booking[]
+  clubNotes      ClubNote[]
+  supportTickets SupportTicket[]
+
+  @@map("members")
+}
+
+model Membership {
+  id         String           @id @default(cuid())
+  memberId   String           @unique @map("member_id")
+  tier       MembershipTier
+  status     MembershipStatus @default(ACTIVE)
+  guestQuota Int              @default(0) @map("guest_quota")
+  validFrom  DateTime         @map("valid_from") @db.Timestamptz(3)
+  validUntil DateTime         @map("valid_until") @db.Timestamptz(3)
+  createdAt  DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@map("memberships")
+}

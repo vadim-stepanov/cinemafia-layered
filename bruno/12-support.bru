@@ -1,0 +1,22 @@
+meta {
+  name: Create support ticket
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/v1/support
+  body: json
+  auth: none
+}
+
+headers {
+  X-User-Id: {{userId}}
+}
+
+body:json {
+  {
+    "subject": "Cabin heating",
+    "body": "The Crew Cabin was a little cold tonight."
+  }
+}

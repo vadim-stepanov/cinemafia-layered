@@ -1,0 +1,15 @@
+meta {
+  name: My bookings
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/v1/bookings
+  body: none
+  auth: none
+}
+
+headers {
+  X-User-Id: {{userId}}
+}

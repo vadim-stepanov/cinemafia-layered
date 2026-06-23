@@ -1,0 +1,15 @@
+meta {
+  name: Booking detail
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}
+  body: none
+  auth: none
+}
+
+headers {
+  X-User-Id: {{userId}}
+}

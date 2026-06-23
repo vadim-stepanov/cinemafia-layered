@@ -1,0 +1,110 @@
+enum SeatTier {
+  STANDARD
+  RECLINER
+  PREMIUM
+
+  @@map("seat_tier")
+}
+
+enum SessionKind {
+  GENRE_BLOCK
+  COMBO
+  MARATHON
+  SPECIAL_CUT
+  SPECIAL_EVENT
+  PREMIERE
+
+  @@map("session_kind")
+}
+
+model Movie {
+  id          String   @id @default(cuid())
+  title       String
+  durationMin Int      @map("duration_min")
+  releaseYear Int?     @map("release_year")
+  synopsis    String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  sessions SessionMovie[]
+
+  @@map("movies")
+}
+
+model Hall {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  seats    Seat[]
+  cabins   Cabin[]
+  sessions Session[]
+
+  @@map("halls")
+}
+
+model Seat {
+  id       String   @id @default(cuid())
+  hallId   String   @map("hall_id")
+  rowLabel String   @map("row_label")
+  number   Int
+  tier     SeatTier
+
+  hall         Hall          @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  bookingSeats BookingSeat[]
+
+  @@unique([hallId, rowLabel, number])
+  @@map("seats")
+}
+
+model Cabin {
+  id       String @id @default(cuid())
+  hallId   String @map("hall_id")
+  name     String
+  capacity Int
+
+  hall     Hall      @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@unique([hallId, name])
+  @@map("cabins")
+}
+
+model Session {
+  id                     String      @id @default(cuid())
+  hallId                 String      @map("hall_id")
+  kind                   SessionKind
+  startsAt               DateTime    @map("starts_at") @db.Timestamptz(3)
+  endsAt                 DateTime    @map("ends_at") @db.Timestamptz(3)
+  earlyAccessUntil       DateTime?   @map("early_access_until") @db.Timestamptz(3)
+  minLoyaltyDegree       Int         @default(0) @map("min_loyalty_degree")
+  basePriceStandardCents Int         @map("base_price_standard_cents")
+  basePriceReclinerCents Int         @map("base_price_recliner_cents")
+  basePricePremiumCents  Int         @map("base_price_premium_cents")
+  cabinPriceCents        Int         @map("cabin_price_cents")
+  createdAt              DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt              DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  hall      Hall           @relation(fields: [hallId], references: [id])
+  movies    SessionMovie[]
+  bookings  Booking[]
+  clubNotes ClubNote[]
+
+  @@index([startsAt])
+  @@index([kind])
+  @@map("sessions")
+}
+
+model SessionMovie {
+  sessionId String @map("session_id")
+  movieId   String @map("movie_id")
+  position  Int
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  movie   Movie   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  @@id([sessionId, movieId])
+  @@unique([sessionId, position])
+  @@map("session_movies")
+}

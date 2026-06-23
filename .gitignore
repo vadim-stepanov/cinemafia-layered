@@ -1,0 +1,22 @@
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.env
+.env.local
+.env.*.local
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.turbo/
+*.tsbuildinfo
+
+# Prisma generated client (re-exported from src)
+src/generated/
+.prisma/
+
+# Bruno runtime
+bruno/environments/*.local.bru

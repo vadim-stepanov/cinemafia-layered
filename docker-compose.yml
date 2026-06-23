@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: cinemafia
+      POSTGRES_USER: cinemafia
+      POSTGRES_PASSWORD: dev
+    # Host port 5442 (distinct per repo so sibling projects can coexist);
+    # container stays on 5432. DATABASE_URL → ...@localhost:5442/cinemafia
+    ports: ["5442:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cinemafia -d cinemafia"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres-data:

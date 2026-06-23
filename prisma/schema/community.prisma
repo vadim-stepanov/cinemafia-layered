@@ -1,0 +1,34 @@
+enum SupportTicketStatus {
+  OPEN
+  CLOSED
+
+  @@map("support_ticket_status")
+}
+
+model ClubNote {
+  id        String   @id @default(cuid())
+  memberId  String   @map("member_id")
+  sessionId String   @map("session_id")
+  body      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  member  Member  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("club_notes")
+}
+
+model SupportTicket {
+  id        String              @id @default(cuid())
+  memberId  String?             @map("member_id")
+  subject   String
+  body      String
+  status    SupportTicketStatus @default(OPEN)
+  createdAt DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  member Member? @relation(fields: [memberId], references: [id], onDelete: SetNull)
+
+  @@index([memberId])
+  @@map("support_tickets")
+}
